@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<project name="QuoteApp" default="war">
+        <property file="build.properties"/>
+
+        <target name="display Vars">
+            <echo message="Tomcat home is ${TOMCAT_HOME}"/>
+            <echo message="Log dir is ${TOMCAT_LOG_DIR}"/>
+        </target>
+    
+        <target name="init">
+            <mkdir dir="build/classes"/>
+            <mkdir dir="dist" />
+        </target>
+
+        <path id="compile.classpath">
+          <fileset dir="lib">
+              <include name="*.jar"/>
+          </fileset>
+          <dirset dir = "." />
+        </path>
+
+        <target name="compile" depends="init" >
+            <javac destdir="build/classes" debug="true" srcdir="src/springrest">
+                <classpath refid="compile.classpath"/>
+            </javac>
+            <javac destdir="build/classes" debug="true" srcdir="src/log" />
+        </target>
+
+        <target name="war" depends="compile">
+            <war destfile="dist/QuoteService.war" webxml="resources/WEB-INF/web.xml">
+                <webinf dir="resources" includes="rest-servlet.xml" />
+                <webinf dir="resources/WEB-INF" includes="springJmx.xml" />
+                <fileset dir="resources/WEB-INF" includes="**/*.jsp/" />
+                <lib dir="lib"/>
+                <classes dir="build/classes"/>
+                <classes dir="resources" includes="logging.properties"/>
+            </war>
+        </target>
+
+        <target name="clean">
+            <delete dir="dist" />
+            <delete dir="build" />
+        </target>
+
+        <target name="cleanServer">
+            <delete file="${TOMCAT_WEBAPPS}/QuoteService.war"/>
+            <delete dir= "${TOMCAT_WEBAPPS}/QuoteService"/>
+            <delete file="{TOMCAT_LOG_DIR}/quoteservice*"/>
+        </target>
+
+        <target name="deploy" depends="clean, cleanServer, war">
+            <copy file="dist/QuoteService.war" todir="${TOMCAT_WEBAPPS}" />
+        </target>
+</project>

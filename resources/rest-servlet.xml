@@ -1,0 +1,69 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:oxm="http://www.springframework.org/schema/oxm"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+            http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-3.0.xsd">
+
+    <!--To enable @RequestMapping process on type level and method level-->
+    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
+
+    <context:component-scan base-package="springrest"/>
+    <mvc:annotation-driven/>
+
+    <!-- This config is for rendering html responses based on JSP's -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="order" value="2" />
+				<property name="prefix">
+					<value>/jsp/</value>
+				</property>
+				<property name="suffix">
+					<value>.jsp</value>
+				</property>
+    </bean>
+
+    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+	  <property name="order" value="1" />
+	  <property name="mediaTypes">
+		<map>
+		   <entry key="json" value="application/json" />
+		   <entry key="xml" value="application/xml" />
+		   <entry key="rss" value="application/rss+xml" />
+		</map>
+	  </property>
+
+	  <property name="defaultViews">
+		<list>
+		  <!-- JSON View -->
+		  <bean
+			class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
+		  </bean>
+
+          <!-- RSS View -->
+		  <bean class="springrest.QuoteRSSFeedView" />
+
+		  <!-- JAXB XML View -->
+		  <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
+			<constructor-arg>
+				<bean class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+				   <property name="classesToBeBound">
+					<list>
+					   <value>springrest.Quote</value>
+					</list>
+				   </property>
+				</bean>
+			</constructor-arg>
+		  </bean>
+		 </list>
+	  </property>
+	  <property name="ignoreAcceptHeader" value="true" />
+
+	</bean>
+</beans>
