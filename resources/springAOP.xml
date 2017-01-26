@@ -1,0 +1,25 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:aop="http://www.springframework.org/schema/aop"
+      xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/ schema/aop/spring-aop-3.0.xsd">
+
+    <!-- this is the object that will be proxied by Spring's AOP infrastructure -->
+   <bean id="fooService" class="springaop.aroundadvice.DefaultFooService"/>
+
+   <!-- this is the actual advice itself -->
+   <bean id="profiler" class="springaop.aroundadvice.SimpleProfiler"/>
+
+   <aop:config>
+      <aop:aspect ref="profiler">
+
+         <aop:pointcut id="fooServicePtcut"
+                    expression="execution(* springaop.aroundadvice.FooService.getFoo(String,int)) and args(name, age)"/>
+
+         <aop:around pointcut-ref="fooServicePtcut" method="profile"/>
+
+      </aop:aspect>
+   </aop:config>
+
+</beans>

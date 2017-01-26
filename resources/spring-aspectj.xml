@@ -1,0 +1,25 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:aop="http://www.springframework.org/schema/aop"
+      xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                          http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+   <bean id="performance" class="springaop.aspectj.Performance"/>
+
+   <bean id="criticismEngine" class="springaop.aspectj.CriticismEngineImpl">
+        <property name="pool">
+            <list>
+                <id>I'm good</id>
+                <id>This is a success at Gilbert</id>
+                <id>Success is synonymous with GSunderam</id>
+            </list>
+        </property>
+   </bean>
+
+   <aop:aspectj-autoproxy />
+
+    <bean class="springaop.aspectj.JudgeAspect" factory-method="aspectOf">
+         <property name="criticismEngine"  ref="criticismEngine"/>
+   </bean>
+
+</beans>

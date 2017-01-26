@@ -1,0 +1,28 @@
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http&#58;//www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+
+    <bean id="carTarget" class="springaop.introduction.Car" singleton="false" />
+
+    <bean id="paintColorMixin" class="springaop.introduction.PaintColorMixin" singleton="false" />
+
+    <bean id="paintColorAdvisor" class="org.springframework.aop.support.DefaultIntroductionAdvisor" singleton="false">
+        <constructor-arg>
+            <ref bean="paintColorMixin"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="car" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="proxyTargetClass">
+            <id>true</id>
+        </property>
+        <!-- This advisor decorates the advised Car Proxy bean with a new Parent viz. PaintColor -->
+        <property name="interceptorNames">
+            <list>
+                <id>paintColorAdvisor</id>
+            </list>
+        </property>
+        <property name="target">
+            <ref bean="carTarget"/>
+        </property>
+    </bean>
+</beans>

@@ -1,0 +1,40 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+        <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
+            <property name="assembler" ref="assembler"/>
+            <property name="namingStrategy" ref="namingStrategy"/>
+            <property name="autodetect" value="true"/>
+					  <property name="notificationListenerMappings">
+							<map>
+									<entry key="bean:name=student">
+											<bean class="springrest.SalChangeListener"/>
+									</entry>
+							</map>
+        		</property>
+        </bean>
+
+        <bean id="jmxAttributeSource" class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource"/>
+
+        <!-- will create management interface using annotation metadata -->
+        <bean id="assembler" class="org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler">
+            <property name="attributeSource" ref="jmxAttributeSource"/>
+        </bean>
+
+        <!-- will pick up the ObjectName from the annotation -->
+        <bean id="namingStrategy" class="org.springframework.jmx.export.naming.MetadataNamingStrategy">
+            <property name="attributeSource" ref="jmxAttributeSource"/>
+        </bean>
+
+        <bean id="student" class="springrest.Student">
+            <property name="name" value="GS"/>
+            <property name="company" value="Matson"/>
+            <property name="salary" value="4001.34"/>
+        </bean>
+
+</beans>
